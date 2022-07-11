@@ -19,13 +19,11 @@ public class Window extends JFrame implements Runnable {
     private final int screen_wedth = 1000;
     private final int screen_height = 800;
     // Частота обновления экрана (количество кадров в секунду)
-    private final int FrameRate = 240;
+    private int FrameRate = 240;
     // Счётчик кадров
     private int FrameCounter = 0;
     // Цвет заднего фона
     private final Color BackGroundColor = new Color(200, 200, 200, 255);
-
-    JPanel jPanel = new JPanel();
 
     // ******
     // Данные
@@ -39,15 +37,18 @@ public class Window extends JFrame implements Runnable {
     // Размер еды
     private int FoodSize = 10;
     // Скорость появления еды (чем больше значение тем медленее появляется еда)
-    private final int FoodSpawnRate = 5;
+    private int FoodSpawnRate = 30;
     // Вероятность мутации в %
-    private final int ChanceOfMutation = 5;
+    private int ChanceOfMutation = 5;
     // Скорость голодания
-    private final double FastingSpeed = 0.025f;
+    private double FastingSpeed = 0.025f;
     // Начальное количество зелёных бактерий
     private final int CountOfPopulationGreen = 20;
     // Начальное количество крастных бактерий
     private final int CountOfPopulationRed = 1;
+
+    // Дополнительное окно
+    Settings FormSettings = new Settings(FrameRate, FoodSpawnRate, ChanceOfMutation, FastingSpeed);
 
     // Настройки окна
     public Window()  {
@@ -66,7 +67,7 @@ public class Window extends JFrame implements Runnable {
 
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setVisible(true);
-
+        FormSettings.MoveUp();    // Открывает окно поверх других
         // Обработка событий мыши
         super.addMouseListener(new MouseListener() {
             // При нажатии на мышь появляется еда на месте курсора
@@ -116,11 +117,10 @@ public class Window extends JFrame implements Runnable {
             creature.drawCreature(g2);
         }
         logic();
+        ChangeSettings();
         // Отрисовка интерфейса
         //g2.setColor(new Color(180, 180, 180,220));
         //g2.fillRect(0,0,200,screen_height);
-
-
     }
     // Метод для отрисовки еды
     private void drawFood(Graphics2D g2){
@@ -246,5 +246,11 @@ public class Window extends JFrame implements Runnable {
         }
         ++FrameCounter;
         if(FrameCounter > 10000){FrameCounter = 0;}
+    }
+    public void ChangeSettings(){
+        FrameRate = FormSettings.getFrameRate();
+        FoodSpawnRate = FormSettings.getFoodSpawnRate();
+        ChanceOfMutation = FormSettings.getFChanceOfMutation();
+        FastingSpeed = FormSettings.getFastingSpeed();
     }
 }
