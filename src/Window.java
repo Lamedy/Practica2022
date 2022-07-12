@@ -1,13 +1,12 @@
 
-// *************************************
-// Класс описания работы окна приложения
-// *************************************
+// *****************************************
+// Класс для описания работы окна приложения
+// *****************************************
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class Window extends JFrame implements Runnable {
@@ -16,8 +15,9 @@ public class Window extends JFrame implements Runnable {
     // **************
 
     // Размер окна
-    private final int screen_wedth = 1000;
-    private final int screen_height = 800;
+    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+    private final int screen_wedth = dimension.width;
+    private final int screen_height = dimension.height;
     // Частота обновления экрана (количество кадров в секунду)
     private int FrameRate = 240;
     // Счётчик кадров
@@ -35,23 +35,30 @@ public class Window extends JFrame implements Runnable {
     public ArrayList<GreenBacteria> greenBacteria = new ArrayList<>();
     public ArrayList<RedBacteria> redBacteria = new ArrayList<>();
     // Размер еды
-    private int FoodSize = 10;
+    private int FoodSize = 8;
     // Скорость появления еды (чем больше значение тем медленее появляется еда)
-    private int FoodSpawnRate = 30;
+    private int FoodSpawnRate = 10; // Не ставить ниже 10
     // Вероятность мутации в %
-    private int ChanceOfMutation = 5;
+    private int ChanceOfMutation = 40;
     // Скорость голодания
-    private double FastingSpeed = 0.025f;
+    private double FastingSpeed = 0.035f;
     // Начальное количество зелёных бактерий
-    private final int CountOfPopulationGreen = 20;
+    private final int CountOfPopulationGreen = 40;
     // Начальное количество крастных бактерий
-    private final int CountOfPopulationRed = 1;
+    private final int CountOfPopulationRed = 3;
+    // Начальное количество еды
+    private final int StartFood = 300;
 
-    // Дополнительное окно
+    // Дополнительные окна
     Settings FormSettings = new Settings(FrameRate, FoodSpawnRate, ChanceOfMutation, FastingSpeed);
+    Graph graph = new Graph(greenBacteria, redBacteria);
 
     // Настройки окна
     public Window()  {
+        for(int i = 0; i < StartFood; ++i){
+            Food NewFood = new Food((int)(Math.random() * (screen_wedth - 100) + 50), (int)(Math.random() * (screen_height - 100) + 50));
+            food.add(NewFood);
+        }
         // Создаётся CountOfPopulationGreen количество зелёных бактерий
         for(int i = 0; i < CountOfPopulationGreen;i++){
             GreenBacteria NewBacteria = new GreenBacteria((int)(Math.random()*(screen_wedth - 50)) + 50,(int)(Math.random()*(screen_height - 50)) + 50);
@@ -64,10 +71,13 @@ public class Window extends JFrame implements Runnable {
         }
         // Параметры окна
         super.setSize(screen_wedth, screen_height );
-
+        super.setTitle("Bacteria Simulation");
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setVisible(true);
-        FormSettings.MoveUp();    // Открывает окно поверх других
+        // Открывают окна поверх основного окна
+        FormSettings.MoveUp();
+        graph.MoveUp();
+        new Thread(graph).start();
         // Обработка событий мыши
         super.addMouseListener(new MouseListener() {
             // При нажатии на мышь появляется еда на месте курсора
@@ -98,7 +108,7 @@ public class Window extends JFrame implements Runnable {
             public void mouseExited(MouseEvent e) {}
         });
     }
-    // Метод для отрисовки графики (вызывается каждый кадр. т.е. 60 раз в секунду)
+    // Метод для отрисовки графики (вызывается каждый кадр. т.е. FrameRate раз в секунду)
     @Override
     public void paint(Graphics g){
         Graphics2D g2 = (Graphics2D)g;
@@ -118,9 +128,6 @@ public class Window extends JFrame implements Runnable {
         }
         logic();
         ChangeSettings();
-        // Отрисовка интерфейса
-        //g2.setColor(new Color(180, 180, 180,220));
-        //g2.fillRect(0,0,200,screen_height);
     }
     // Метод для отрисовки еды
     private void drawFood(Graphics2D g2){
@@ -134,7 +141,15 @@ public class Window extends JFrame implements Runnable {
     public void run() {
         while(true) {
             try {
-                Thread.sleep(1000 / FrameRate);
+                if(FrameRate != 0){
+                    Thread.sleep(1000 / FrameRate);
+                }
+                else {
+                    while(FrameRate == 0){
+                        Thread.sleep(1);
+                        ChangeSettings();
+                    }
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -146,9 +161,7 @@ public class Window extends JFrame implements Runnable {
         // Зелёная бактерия
         for(GreenBacteria creature : greenBacteria){
             // Перемещение существа
-            if(FrameCounter % creature.getSpeed() == 0){
-                creature.move();
-            }
+            creature.move();
             // Поиск еды и проверка если еда съедена
             creature.FindFood(food);
             // Смерть существа
@@ -158,12 +171,23 @@ public class Window extends JFrame implements Runnable {
         }
         // Красная бактерия
         for(RedBacteria creature : redBacteria){
-            // Перемещение существа
-            if(FrameCounter % creature.getSpeed() == 0){
-                creature.move();
-            }
             // Поиск еды и проверка если еда съедена
-            creature.FindFood(greenBacteria);
+            if(creature.getFullInfo() == false){
+                if(creature.getInfoFood() < 20){
+                    creature.FindFood(greenBacteria);
+                }
+                else{
+                    creature.setMoveX(Math.random() * (screen_wedth - 50) + 50);
+                    creature.setMoveY(Math.random() * (screen_height - 50) + 50);
+                    creature.setFullInfo(true);
+                }
+            }
+            else if ((creature.getInfoFood() < 20) ) {
+                creature.setFullInfo(false);
+            }
+            if(FrameCounter % 5000 == 0){creature.setFullInfo(false);}
+            // Перемещение существа
+            creature.move();
             // Смерть существа
             if(creature.getInfoFood() <= 0){
                 creature.setCondition(true);
@@ -179,11 +203,11 @@ public class Window extends JFrame implements Runnable {
                 greenBacteria.get(i).setX(greenBacteria.get(i).getX()-20);
                 // Мутация скорости существа
                 int random = (int)(Math.random()*100);
-                if(random > 100 - ChanceOfMutation) {
-                    NewBacteria.setSpeed(NewBacteria.getSpeed() + 1);
+                if(random > 100 - ChanceOfMutation && NewBacteria.getSpeed() <= 0.9f) {
+                    NewBacteria.setSpeed(NewBacteria.getSpeed() + 0.1f);
                 }
-                else if(random < ChanceOfMutation && NewBacteria.getSpeed() > 1){
-                    NewBacteria.setSpeed(NewBacteria.getSpeed() - 1);
+                else if(random < ChanceOfMutation && NewBacteria.getSpeed() > 0.1f){
+                    NewBacteria.setSpeed(NewBacteria.getSpeed() - 0.1f);
                 }
                 greenBacteria.add(NewBacteria);
                 ++i;
@@ -198,11 +222,11 @@ public class Window extends JFrame implements Runnable {
                 redBacteria.get(i).setX(redBacteria.get(i).getX()-20);
                 // Мутация скорости существа
                 int random = (int)(Math.random()*100);
-                if(random > 100 - ChanceOfMutation) {
-                    NewBacteria.setSpeed(NewBacteria.getSpeed() + 1);
+                if(random > 100 - ChanceOfMutation && NewBacteria.getSpeed() <= 0.9f) {
+                    NewBacteria.setSpeed(NewBacteria.getSpeed() + 0.1f);
                 }
-                else if(random < ChanceOfMutation && NewBacteria.getSpeed() > 1){
-                    NewBacteria.setSpeed(NewBacteria.getSpeed() - 1);
+                else if(random < ChanceOfMutation && NewBacteria.getSpeed() > 0.1f){
+                    NewBacteria.setSpeed(NewBacteria.getSpeed() - 0.1f);
                 }
                 redBacteria.add(NewBacteria);
                 ++i;
@@ -232,8 +256,10 @@ public class Window extends JFrame implements Runnable {
         }
         // Каждые FoodSpawnRate появляется еда
         if(FrameCounter % FoodSpawnRate == 0) {
-            Food NewFood = new Food((int)(Math.random() * (screen_wedth - 100) + 50), (int)(Math.random() * (screen_height - 100) + 50));
-            food.add(NewFood);
+            for(int i = 0; i < 6; ++i) {
+                Food NewFood = new Food((int) (Math.random() * (screen_wedth - 100) + 50), (int) (Math.random() * (screen_height - 100) + 50));
+                food.add(NewFood);
+            }
         }
         // Каждый кадр существа голодает
         // Зелёные бактерии
@@ -245,7 +271,7 @@ public class Window extends JFrame implements Runnable {
             creature.setInfoFood(creature.getInfoFood() - ( (FastingSpeed / creature.getSpeed()) * creature.getSize()));
         }
         ++FrameCounter;
-        if(FrameCounter > 10000){FrameCounter = 0;}
+        if(FrameCounter > 10001){FrameCounter = 0;}
     }
     public void ChangeSettings(){
         FrameRate = FormSettings.getFrameRate();

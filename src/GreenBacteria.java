@@ -12,10 +12,10 @@ import static java.lang.Math.sqrt;
 
 public class GreenBacteria extends Creature {
     // Хранит изображение бактерии
-    private String way = "img/bacteria.png";
-    private final double StandardMaxSize = 0.6f;
+    private String way = "img/bacteria.png";        // Путь к изображению бактерии
+    private final double StandardMaxSize = 0.6f;    // Максимальный размер до которого вырастает бактерия
     // Конструктор
-    protected GreenBacteria(float x, float y) {
+    protected GreenBacteria(double x, double y) {
         super(x, y);
         try {
             super.bacteria = ImageIO.read(new File(way));
@@ -26,7 +26,7 @@ public class GreenBacteria extends Creature {
         super.MaxSize = StandardMaxSize;
     }
     // Конструктор с использованием генов другого существа
-    protected GreenBacteria(float x, float y, Creature creature) {
+    protected GreenBacteria(double x, double y, Creature creature) {
         this(x,y);
         super.copyCreature(creature);
     }
@@ -37,17 +37,15 @@ public class GreenBacteria extends Creature {
             // Проверка съела ли существо еду
             if (!a.getCondition() && (Math.pow(50*size, 2) > Math.pow(x + 40*size - a.getX(),2) + Math.pow(y + 40*size - a.getY(),2))) {
                 a.setCondition(true);
-                food += 1;
+                food += 2;
                 size += 0.02f;
             }
             // Поиск ближайшей еды и выстовление пути до неё
             double temp = Math.pow(x + 20 - a.getX(), 2) + Math.pow(y + 20 - a.getY(),2);
-            if (getLineOfSight() * getLineOfSight() > temp) {
-                if(distance * distance > temp){
-                    moveX = a.getX() - 20;
-                    moveY = a.getY() - 20;
-                    distance = sqrt(temp);
-                }
+            if (getLineOfSight() * getLineOfSight() > temp && distance * distance > temp) {
+                moveX = a.getX() - 20;
+                moveY = a.getY() - 20;
+                distance = sqrt(temp);
             }
         }
     }

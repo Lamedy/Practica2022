@@ -8,40 +8,40 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 abstract class Creature {
-    protected float x, y;                 // Координаты существа
-    protected float moveX, moveY;         // Координаты в которые движется существо
+    protected double x, y;                // Координаты существа
+    protected double moveX, moveY;        // Координаты в которые движется существо
     protected boolean isDead = false;     // Флаг смерти существа
     protected double food;                // Количество еды у существа
     protected BufferedImage bacteria;     // Изображение существа
     protected double LineOfSight;         // поле зрение существа
     protected double size;                // размер существа
     protected double MaxSize;             // Максимальный размер существа
-    protected int speed;                  // Скорость существа
+    protected double speed;               // Скорость существа
 
-    protected Creature(float x,float y){
+    protected Creature(double x,double y){
         this.x = x;
         this.y = y;
         this.food = 8;
         this.moveX = x;
         this.moveY = y;
-        this.size = 0.4f;
-        this.LineOfSight = 2000;
-        this.speed = (int)(Math.random() * 6) + 1;
+        this.size = 0.5f;
+        this.LineOfSight = 500;
+        this.speed = (Math.random() * 1f) + 0.1f;
     }
     // Возращает координату x
-    public float getX(){
+    public double getX(){
         return x;
     }
     // Возращает координату y
-    public float getY(){
+    public double getY(){
         return y;
     }
     // Возращает координату moveX
-    public float getMoveX(){
+    public double getMoveX(){
         return moveX;
     }
     // Возращает координату moveY
-    public float getMoveY(){
+    public double getMoveY(){
         return moveY;
     }
     // Возращает состояние существа, живо ли оно или нет
@@ -65,23 +65,23 @@ abstract class Creature {
         return MaxSize;
     }
     // Возращает скорость существа
-    public int getSpeed(){
+    public double getSpeed(){
         return speed;
     }
     // Изменяет координату x
-    protected void setX(float x){
+    protected void setX(double x){
         this.x = x;
     }
     // Изменяет координату y
-    protected void setY(float y){
+    protected void setY(double y){
         this.y = y;
     }
     // Изменяет координату moveX
-    protected void setMoveX(float x){
+    protected void setMoveX(double x){
         this.moveX = x;
     }
     // Изменяет координату moveY
-    protected void setMoveY(float y){
+    protected void setMoveY(double y){
         this.moveY = y;
     }
     // Изменяет состояние существа, живо ли оно или нет
@@ -97,7 +97,7 @@ abstract class Creature {
         this.size = size;
     }
     // Возращает скорость существа
-    public void setSpeed(int speed){
+    public void setSpeed(double speed){
         this.speed = speed;
     }
     // Возращает изображение бактерии
@@ -114,17 +114,17 @@ abstract class Creature {
     }
     // Двигает существо в сторону цели
     public void move(){
-        if(x < moveX){
-            x+=1;
+        if(x+1 < moveX ){
+            x+=speed;
         }
-        else if (x > moveX){
-            x-=1;
+        else if (x-1 > moveX){
+            x-=speed;
         }
-        if (y < moveY){
-            y+=1;
+        if (y+1 < moveY){
+            y+=speed;
         }
-        else if (y > moveY){
-            y-=1;
+        else if (y-1 > moveY){
+            y-=speed;
         }
     }
     public void drawCreature(Graphics2D g2){

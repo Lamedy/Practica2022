@@ -1,3 +1,8 @@
+
+// *****************************
+// Класс для настроек приложения
+// *****************************
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,7 +11,7 @@ import java.awt.event.ActionListener;
 public class Settings {
     JFrame jFrame = new JFrame();
     JPanel jPanel = new JPanel();
-    int width = 200;
+    int width = 230;
     int height = 345;
     int frameRate;
     int foodSpawnRate;
@@ -20,10 +25,10 @@ public class Settings {
         this.fastingSpeed = FastingSpeed;
 
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        jFrame.setBounds(dimension.width/2 - width/2,dimension.height/2 - height/2,width,height);
+        jFrame.setBounds(dimension.width - width,dimension.height - height-50,width,height);
         jPanel.setLayout(null);
         jFrame.add(jPanel);
-
+        jFrame.setTitle("Settings");
 
         // Создание интерфейса
         // Текст
@@ -39,15 +44,15 @@ public class Settings {
         }
         // Спинеры
         SpinnerModel[] model = {
-                new SpinnerNumberModel(FrameRate/120,  1, 8, 1),        // FrameRate
-                new SpinnerNumberModel(FoodSpawnRate,  1, 1000, 1),    // FoodSpawnRate
+                new SpinnerNumberModel(FrameRate/120,  0, 8, 1),        // FrameRate
+                new SpinnerNumberModel(60/FoodSpawnRate,  0, 8, 1),    // FoodSpawnRate
                 new SpinnerNumberModel(ChanceOfMutation / 2,  0, 100, 1),  // ChanceOfMutation
                 new SpinnerNumberModel(FastingSpeed,  0, 1f, 0.001f)   // FastingSpeed
         };
         JSpinner[] jSpinner = new JSpinner[4];
         for(int i = 0; i < 4;++i){
             jSpinner[i] = new JSpinner(model[i]);
-            jSpinner[i].setBounds(10,40+i*60,160,25);
+            jSpinner[i].setBounds(10,40+i*60,190,25);
             jPanel.add(jSpinner[i]);
         }
         // Кнопка
@@ -57,7 +62,18 @@ public class Settings {
         jButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frameRate = (int) jSpinner[0].getValue()*120;
-                foodSpawnRate = (int) jSpinner[1].getValue();
+                if((int) jSpinner[1].getValue() == 0){
+                    foodSpawnRate = 999999999;
+                }
+                else if((int) jSpinner[1].getValue() == 7){
+                    foodSpawnRate = 5;
+                }
+                else if((int) jSpinner[1].getValue() == 8){
+                    foodSpawnRate = 1;
+                }
+                else{
+                    foodSpawnRate =  60/(int)jSpinner[1].getValue();
+                }
                 chanceOfMutation = (int) jSpinner[2].getValue() / 2;
                 fastingSpeed = (double) jSpinner[3].getValue();
             }
@@ -66,7 +82,6 @@ public class Settings {
 
         jPanel.setBackground(new Color(180,180,180));
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setVisible(true);
     }
     // Возращает количество кадров в секунду
     public int getFrameRate(){

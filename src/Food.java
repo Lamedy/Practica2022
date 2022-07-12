@@ -6,7 +6,7 @@
 import java.awt.*;
 
 public class Food {
-    private float x, y;         // Координаты еды
+    private float x, y;                 // Координаты еды
     private boolean isEaten = false;    // Флаг обозночающий съедена ли еда?
     private int color;                  // Цвет еды
     // Доступные цвета еды
