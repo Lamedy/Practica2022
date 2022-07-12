@@ -3,16 +3,20 @@
 // Класс для описания существа
 // ***************************
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 abstract class Creature {
     protected double x, y;                // Координаты существа
     protected double moveX, moveY;        // Координаты в которые движется существо
     protected boolean isDead = false;     // Флаг смерти существа
     protected double food;                // Количество еды у существа
-    protected BufferedImage bacteria;     // Изображение существа
+    protected BufferedImage[] bacteria = new BufferedImage[2];     // Изображение существа
+    private int condition = 0;
     protected double LineOfSight;         // поле зрение существа
     protected double size;                // размер существа
     protected double MaxSize;             // Максимальный размер существа
@@ -102,15 +106,16 @@ abstract class Creature {
     }
     // Возращает изображение бактерии
     public BufferedImage getImage(){
-        return bacteria;
+        return bacteria[0];
     }
     // Копирвоание характеристик существа
     protected void copyCreature(Creature creature){
         this.x = creature.getX() + 35;
         this.y = creature.getY();
-        this.bacteria = creature.getImage();
+        this.bacteria[0] = creature.getImage();
         this.size = creature.getSize();
         this.speed = creature.getSpeed();
+        this.condition = 0;
     }
     // Двигает существо в сторону цели
     public void move(){
@@ -127,11 +132,17 @@ abstract class Creature {
             y-=speed;
         }
     }
+    // Нарисовать существо
     public void drawCreature(Graphics2D g2){
         AffineTransform trans = new AffineTransform();
         trans.setTransform(new AffineTransform());
         trans.translate(x, y);
         trans.scale(size, size);
-        g2.drawImage(bacteria, trans, null);
+        g2.drawImage(bacteria[condition], trans, null);
+    }
+    // Логика смены кадров для анимации
+    public void Animation(){
+        if(condition == 0){condition++;}
+        else condition--;
     }
 }

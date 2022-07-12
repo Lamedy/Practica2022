@@ -3,10 +3,14 @@
 // Класс для настроек приложения
 // *****************************
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Settings {
     JFrame jFrame = new JFrame();
@@ -29,6 +33,13 @@ public class Settings {
         jPanel.setLayout(null);
         jFrame.add(jPanel);
         jFrame.setTitle("Settings");
+        jFrame.setAlwaysOnTop( true );
+        try {
+            jFrame.setIconImage(ImageIO.read(new File("img/Settings.png")));
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
 
         // Создание интерфейса
         // Текст
@@ -57,7 +68,7 @@ public class Settings {
         }
         // Кнопка
         JButton jButton = new JButton("Обновить настройки");
-        jButton.setBounds(10,260,160,30);
+        jButton.setBounds(10,260,190,30);
         // Событие при нажатии на кнопку
         jButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -79,6 +90,9 @@ public class Settings {
             }
         });
         jPanel.add(jButton);
+
+        jFrame.setUndecorated(true);
+        jFrame.setOpacity(0.9f);
 
         jPanel.setBackground(new Color(180,180,180));
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

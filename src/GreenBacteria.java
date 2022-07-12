@@ -12,13 +12,14 @@ import static java.lang.Math.sqrt;
 
 public class GreenBacteria extends Creature {
     // Хранит изображение бактерии
-    private String way = "img/bacteria.png";        // Путь к изображению бактерии
+    private String[] way = {"img/Bacteria1.png", "img/Bacteria2.png"};        // Путь к изображению бактерии
     private final double StandardMaxSize = 0.6f;    // Максимальный размер до которого вырастает бактерия
     // Конструктор
     protected GreenBacteria(double x, double y) {
         super(x, y);
         try {
-            super.bacteria = ImageIO.read(new File(way));
+            super.bacteria[0] = ImageIO.read(new File(way[0]));
+            super.bacteria[1] = ImageIO.read(new File(way[1]));
         }
         catch(IOException e){
             e.printStackTrace();
@@ -27,7 +28,10 @@ public class GreenBacteria extends Creature {
     }
     // Конструктор с использованием генов другого существа
     protected GreenBacteria(double x, double y, Creature creature) {
-        this(x,y);
+        super(x,y);
+        super.bacteria[0] = creature.bacteria[0];
+        super.bacteria[1] = creature.bacteria[1];
+        super.MaxSize = StandardMaxSize;
         super.copyCreature(creature);
     }
     // Взаимодействие бактерии с едой

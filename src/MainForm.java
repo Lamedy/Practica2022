@@ -3,21 +3,24 @@
 // Класс для описания работы окна приложения
 // *****************************************
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class Window extends JFrame implements Runnable {
+public class MainForm extends JFrame implements Runnable {
     // **************
     // Настройки окна
     // **************
 
     // Размер окна
     Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-    private final int screen_wedth = dimension.width;
-    private final int screen_height = dimension.height;
+    private final int screen_width = dimension.width+8;
+    private final int screen_height = dimension.height-20;
     // Частота обновления экрана (количество кадров в секунду)
     private int FrameRate = 240;
     // Счётчик кадров
@@ -54,23 +57,29 @@ public class Window extends JFrame implements Runnable {
     Graph graph = new Graph(greenBacteria, redBacteria);
 
     // Настройки окна
-    public Window()  {
+    public MainForm()  {
         for(int i = 0; i < StartFood; ++i){
-            Food NewFood = new Food((int)(Math.random() * (screen_wedth - 100) + 50), (int)(Math.random() * (screen_height - 100) + 50));
+            Food NewFood = new Food((int)(Math.random() * (screen_width - 100) + 50), (int)(Math.random() * (screen_height - 100) + 50));
             food.add(NewFood);
         }
         // Создаётся CountOfPopulationGreen количество зелёных бактерий
         for(int i = 0; i < CountOfPopulationGreen;i++){
-            GreenBacteria NewBacteria = new GreenBacteria((int)(Math.random()*(screen_wedth - 50)) + 50,(int)(Math.random()*(screen_height - 50)) + 50);
+            GreenBacteria NewBacteria = new GreenBacteria((int)(Math.random()*(screen_width - 50)) + 50,(int)(Math.random()*(screen_height - 50)) + 50);
             greenBacteria.add(NewBacteria);
         }
         // Создаётся CountOfPopulationRed количество крастных бактерий
         for(int i = 0; i < CountOfPopulationRed;i++){
-            RedBacteria NewBacteria = new RedBacteria((int)(Math.random()*(screen_wedth - 50)) + 50,(int)(Math.random()*(screen_height - 50)) + 50);
+            RedBacteria NewBacteria = new RedBacteria((int)(Math.random()*(screen_width - 50)) + 50,(int)(Math.random()*(screen_height - 50)) + 50);
             redBacteria.add(NewBacteria);
         }
         // Параметры окна
-        super.setSize(screen_wedth, screen_height );
+        try {
+            super.setIconImage(ImageIO.read(new File("img/Bacteria1.png")));
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        super.setSize(screen_width, screen_height );
         super.setTitle("Bacteria Simulation");
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setVisible(true);
@@ -114,16 +123,22 @@ public class Window extends JFrame implements Runnable {
         Graphics2D g2 = (Graphics2D)g;
         Toolkit.getDefaultToolkit().sync();
         g2.setColor(BackGroundColor);
-        g2.fillRect(0, 0, screen_wedth, screen_height);
+        g2.fillRect(0, 0, screen_width, screen_height);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         drawFood(g2);
         // Отрисовка зелёной бактерии
         for (GreenBacteria creature : greenBacteria) {
+            if(FrameCounter % 10 == 0) {
+                creature.Animation();
+            }
             creature.drawCreature(g2);
         }
         // Отрисовка красной бактерии
         for (RedBacteria creature : redBacteria) {
+            if(FrameCounter % 10 == 0) {
+                creature.Animation();
+            }
             creature.drawCreature(g2);
         }
         logic();
@@ -177,7 +192,7 @@ public class Window extends JFrame implements Runnable {
                     creature.FindFood(greenBacteria);
                 }
                 else{
-                    creature.setMoveX(Math.random() * (screen_wedth - 50) + 50);
+                    creature.setMoveX(Math.random() * (screen_width - 50) + 50);
                     creature.setMoveY(Math.random() * (screen_height - 50) + 50);
                     creature.setFullInfo(true);
                 }
@@ -257,7 +272,7 @@ public class Window extends JFrame implements Runnable {
         // Каждые FoodSpawnRate появляется еда
         if(FrameCounter % FoodSpawnRate == 0) {
             for(int i = 0; i < 6; ++i) {
-                Food NewFood = new Food((int) (Math.random() * (screen_wedth - 100) + 50), (int) (Math.random() * (screen_height - 100) + 50));
+                Food NewFood = new Food((int) (Math.random() * (screen_width - 50) + 50), (int) (Math.random() * (screen_height - 50) + 50));
                 food.add(NewFood);
             }
         }

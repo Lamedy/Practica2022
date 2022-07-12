@@ -3,14 +3,17 @@
 // Класс для отрисовки графика популяции бактерий
 // **********************************************
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Graph extends JFrame implements Runnable {
 
     JPanel jPanel = new JPanel();
-    int width = 800;
+    int width = 1000;
     int height = 320;
     // Массивы в которых хранится вся информация о бактериях
     ArrayList<GreenBacteria> greenBacteria;
@@ -36,16 +39,24 @@ public class Graph extends JFrame implements Runnable {
         this.redBacteria = redBacteria;
         // Настройки окна
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        super.setBounds(dimension.width - width,0,width,height);
+        super.setBounds(dimension.width - width,32,width,height);
         jPanel.setLayout(null);
         super.add(jPanel);
         super.setTitle("Graph");
+        super.setAlwaysOnTop( true );
+        try {
+            super.setIconImage(ImageIO.read(new File("img/Graph.png")));
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        super.setUndecorated(true);
+        super.setOpacity(0.9f);
         jPanel.setBackground(new Color(180,180,180));
-        super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Добавление текста в окно
-        countGreen.setBounds(10,250,220,25);
+        countGreen.setBounds(10,284,220,25);
         jPanel.add(countGreen);
-        countRed.setBounds(230,250,220,25);
+        countRed.setBounds(230,284,220,25);
         jPanel.add(countRed);
     }
 
@@ -58,6 +69,8 @@ public class Graph extends JFrame implements Runnable {
         // Изменение текста
         countGreen.setText("Количество зелёных бактерий : " + Integer.toString(greenBacteria.size()));
         countRed.setText("Количество красных бактерий : " + Integer.toString(redBacteria.size()));
+        g2.setColor(new Color(0, 0, 0, 255));
+        g2.drawLine(0, 282,  3000, 282);
         // Отрисовка графика с зелёными бактериями
         for(int i = 0; i < GraphGreenBacteria.size(); ++i) {
             if (GraphGreenBacteria.get(i).size != 0) {

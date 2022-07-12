@@ -5,7 +5,8 @@
 
 public class Main {
     public static void main(String[] args){
-        Window form = new Window();
+
+        MainForm form = new MainForm();
         new Thread(form).start();
     }
 }
