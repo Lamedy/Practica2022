@@ -87,25 +87,24 @@ public class MainForm extends JFrame implements Runnable {
         FormSettings.MoveUp();
         graph.MoveUp();
         new Thread(graph).start();
+
         // Обработка событий мыши
         super.addMouseListener(new MouseListener() {
             // При нажатии на мышь появляется еда на месте курсора
             @Override
             public void mouseClicked(MouseEvent e) {
-                //if(e.getX() > 200){
-                    if(e.getButton() == MouseEvent.BUTTON1){
-                        GreenBacteria NewBacteria = new GreenBacteria(e.getX() - 16 ,e.getY() - 18);
-                        greenBacteria.add(NewBacteria);
-                    }
-                    if (e.getButton() == MouseEvent.BUTTON2){
-                        Food NewFood = new Food(e.getX() - (FoodSize/2),e.getY()- (FoodSize/2));
-                        food.add(NewFood);
-                    }
-                    if (e.getButton() == MouseEvent.BUTTON3){
-                        RedBacteria NewBacteria = new RedBacteria(e.getX() - 16 ,e.getY() - 18);
-                        redBacteria.add(NewBacteria);
-                    }
-                //}
+                if(e.getButton() == MouseEvent.BUTTON1){
+                    GreenBacteria NewBacteria = new GreenBacteria(e.getX() - 16 ,e.getY() - 18);
+                    greenBacteria.add(NewBacteria);
+                }
+                if (e.getButton() == MouseEvent.BUTTON2){
+                    Food NewFood = new Food(e.getX() - (FoodSize/2),e.getY()- (FoodSize/2));
+                    food.add(NewFood);
+                }
+                if (e.getButton() == MouseEvent.BUTTON3){
+                    RedBacteria NewBacteria = new RedBacteria(e.getX() - 16 ,e.getY() - 18);
+                    redBacteria.add(NewBacteria);
+                }
             }
             @Override
             public void mousePressed(MouseEvent e) {}

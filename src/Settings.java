@@ -8,15 +8,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class Settings {
     JFrame jFrame = new JFrame();
     JPanel jPanel = new JPanel();
-    int width = 230;
-    int height = 345;
+    int width = 210;
+    int height = 305;
     int frameRate;
     int foodSpawnRate;
     int chanceOfMutation;
